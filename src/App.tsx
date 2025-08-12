@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Inventory from "./pages/Inventory";
 import Requests from "./pages/Requests";
+import UserManagement from "./pages/UserManagement";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
@@ -55,6 +56,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <Inventory />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/users" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <UserManagement />
             </ProtectedRoute>
           } 
         />

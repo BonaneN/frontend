@@ -31,6 +31,7 @@ const AppSidebar = () => {
 
   const adminMenuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+    { icon: Users, label: 'User Management', path: '/users' },
     { icon: Building2, label: 'Branches', path: '/branches' },
     { icon: Users, label: 'Suppliers', path: '/suppliers' },
     { icon: Package, label: 'Inventory', path: '/inventory' },

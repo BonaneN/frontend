@@ -96,13 +96,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, userData: any) => {
     try {
-      const redirectUrl = `${window.location.origin}/`;
-      
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl,
           data: userData
         }
       });
@@ -116,7 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         toast({
           title: "Success",
-          description: "Please check your email to confirm your account",
+          description: "Account created successfully! You can now sign in.",
         });
       }
       
