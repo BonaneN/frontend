@@ -5,6 +5,8 @@ import { Package, ShoppingCart, Truck, AlertTriangle, TrendingUp, Building2 } fr
 import { supabase } from '@/integrations/supabase/client';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import RevenueChart from '@/components/RevenueChart';
+import LowStockAlert from '@/components/LowStockAlert';
 
 interface DashboardStats {
   totalItems: number;
@@ -201,6 +203,12 @@ const Dashboard = () => {
           </Card>
         ))}
       </div>
+
+      {/* Revenue Analysis */}
+      <RevenueChart userRole={userRole || 'branch'} />
+
+      {/* Low Stock Alerts (Admin Only) */}
+      <LowStockAlert userRole={userRole || 'branch'} />
 
       {userRole === 'admin' && (
         <div className="grid gap-4 md:grid-cols-2">

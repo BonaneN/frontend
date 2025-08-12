@@ -74,6 +74,57 @@ export type Database = {
         }
         Relationships: []
       }
+      inventory: {
+        Row: {
+          branch_id: string | null
+          created_at: string | null
+          current_stock: number
+          id: string
+          item_id: string
+          last_updated: string | null
+          max_stock_level: number
+          min_stock_level: number
+          unit_cost: number | null
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string | null
+          current_stock?: number
+          id?: string
+          item_id: string
+          last_updated?: string | null
+          max_stock_level?: number
+          min_stock_level?: number
+          unit_cost?: number | null
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string | null
+          current_stock?: number
+          id?: string
+          item_id?: string
+          last_updated?: string | null
+          max_stock_level?: number
+          min_stock_level?: number
+          unit_cost?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       items: {
         Row: {
           category_id: string | null
@@ -111,6 +162,51 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          item_id: string
+          order_id: string
+          quantity: number
+          total_price: number | null
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          item_id: string
+          order_id: string
+          quantity: number
+          total_price?: number | null
+          unit_price: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          item_id?: string
+          order_id?: string
+          quantity?: number
+          total_price?: number | null
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]

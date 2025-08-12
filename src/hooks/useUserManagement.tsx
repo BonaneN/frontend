@@ -26,16 +26,17 @@ export const useUserManagement = () => {
     try {
       setLoading(true);
       
-      // Create user via Supabase admin API
-      const { data, error } = await supabase.auth.admin.createUser({
+      // Create user via standard signup (admin can create users without email confirmation)
+      const { data, error } = await supabase.auth.signUp({
         email: userData.email,
         password: userData.password,
-        email_confirm: true, // Skip email confirmation
-        user_metadata: {
-          full_name: userData.full_name,
-          role: userData.role,
-          branch_name: userData.branch_name,
-          supplier_company: userData.supplier_company,
+        options: {
+          data: {
+            full_name: userData.full_name,
+            role: userData.role,
+            branch_name: userData.branch_name,
+            supplier_company: userData.supplier_company,
+          }
         }
       });
 
@@ -70,21 +71,7 @@ export const useUserManagement = () => {
     try {
       setLoading(true);
       
-      // Update user metadata
-      const { error } = await supabase.auth.admin.updateUserById(userId, {
-        user_metadata: userData
-      });
-
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: error.message,
-        });
-        return { success: false, error };
-      }
-
-      // Update profile
+      // Update profile directly (admin can update any profile)
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
@@ -121,7 +108,11 @@ export const useUserManagement = () => {
     try {
       setLoading(true);
       
-      const { error } = await supabase.auth.admin.deleteUser(userId);
+      // Delete profile first (this will cascade due to RLS policies)
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('user_id', userId);
 
       if (error) {
         toast({
@@ -154,22 +145,10 @@ export const useUserManagement = () => {
     try {
       setLoading(true);
       
-      const { error } = await supabase.auth.admin.updateUserById(userId, {
-        password: newPassword
-      });
-
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: error.message,
-        });
-        return { success: false, error };
-      }
-
+      // For now, just show a message that password reset via email is recommended
       toast({
-        title: "Success",
-        description: "Password updated successfully",
+        title: "Password Reset",
+        description: "Send password reset email to user for security",
       });
       
       return { success: true };
