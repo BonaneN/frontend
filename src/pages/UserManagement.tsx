@@ -52,6 +52,9 @@ const UserManagement = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
+      
+      // First get all users from auth.users via a view or RPC call
+      // For now, we'll fetch from profiles which should contain all created users
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -62,6 +65,8 @@ const UserManagement = () => {
         return;
       }
 
+      // Log the data to debug
+      console.log('Fetched users:', data);
       setUsers(data || []);
     } catch (error) {
       console.error('Error fetching users:', error);

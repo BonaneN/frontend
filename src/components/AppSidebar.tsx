@@ -11,84 +11,43 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import {
-  LayoutDashboard,
-  Package,
-  ShoppingCart,
-  Truck,
-  Building2,
-  Users,
-  FileText,
-  BarChart3,
-  Settings,
-  ClipboardList,
-} from 'lucide-react';
+  Calendar, Home, Inbox, Search, Settings, Package, Users, FileText, Truck, BarChart3, DollarSign
+} from "lucide-react";
 import { useLocation, useNavigate } from 'react-router-dom';
+
+// Menu items.
+const items = [
+  { title: "Dashboard", url: "/", icon: Home, roles: ['admin', 'branch', 'supplier'] },
+  { title: "Inventory", url: "/inventory", icon: Package, roles: ['admin', 'branch'] },
+  { title: "Requests", url: "/requests", icon: FileText, roles: ['admin', 'branch'] },
+  { title: "Budget Management", url: "/budget", icon: DollarSign, roles: ['admin'] },
+  { title: "User Management", url: "/user-management", icon: Users, roles: ['admin'] },
+];
 
 const AppSidebar = () => {
   const { userRole } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const adminMenuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: Users, label: 'User Management', path: '/users' },
-    { icon: Building2, label: 'Branches', path: '/branches' },
-    { icon: Users, label: 'Suppliers', path: '/suppliers' },
-    { icon: Package, label: 'Inventory', path: '/inventory' },
-    { icon: ClipboardList, label: 'Supply Requests', path: '/requests' },
-    { icon: ShoppingCart, label: 'Purchase Orders', path: '/orders' },
-    { icon: Truck, label: 'Shipments', path: '/shipments' },
-    { icon: BarChart3, label: 'Analytics', path: '/analytics' },
-    { icon: FileText, label: 'Reports', path: '/reports' },
-    { icon: Settings, label: 'Settings', path: '/settings' },
-  ];
-
-  const branchMenuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: Package, label: 'My Inventory', path: '/inventory' },
-    { icon: ClipboardList, label: 'My Requests', path: '/requests' },
-    { icon: Truck, label: 'Deliveries', path: '/shipments' },
-    { icon: FileText, label: 'Reports', path: '/reports' },
-  ];
-
-  const supplierMenuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: ShoppingCart, label: 'Purchase Orders', path: '/orders' },
-    { icon: Truck, label: 'Shipments', path: '/shipments' },
-    { icon: BarChart3, label: 'Performance', path: '/analytics' },
-    { icon: Settings, label: 'Settings', path: '/settings' },
-  ];
-
-  const getMenuItems = () => {
-    switch (userRole) {
-      case 'admin':
-        return adminMenuItems;
-      case 'branch':
-        return branchMenuItems;
-      case 'supplier':
-        return supplierMenuItems;
-      default:
-        return [];
-    }
-  };
-
-  const menuItems = getMenuItems();
+  const filteredItems = items.filter(item => 
+    item.roles.includes(userRole as string)
+  );
 
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>Supply Chain Management</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.path}>
+              {filteredItems.map((item) => (
+                <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton
-                    isActive={location.pathname === item.path}
-                    onClick={() => navigate(item.path)}
+                    isActive={location.pathname === item.url}
+                    onClick={() => navigate(item.url)}
                   >
                     <item.icon className="h-4 w-4" />
-                    <span>{item.label}</span>
+                    <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

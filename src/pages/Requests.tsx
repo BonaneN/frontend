@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, ClipboardList, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Plus, ClipboardList, CheckCircle, XCircle, Clock, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Table,
@@ -13,6 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import CreateRequestDialog from '@/components/CreateRequestDialog';
+import RequestDetailsDialog from '@/components/RequestDetailsDialog';
 
 interface SupplyRequest {
   id: string;
@@ -35,45 +37,46 @@ const Requests = () => {
   const { userRole, profile } = useAuth();
   const [requests, setRequests] = useState<SupplyRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        setLoading(true);
-        
-        let query = supabase
-          .from('supply_requests')
-          .select(`
-            *,
-            branches(branch_name),
-            profiles(full_name)
-          `)
-          .order('created_at', { ascending: false });
-
-        // Filter requests based on user role
-        if (userRole === 'branch') {
-          query = query.eq('requested_by', profile?.user_id);
-        }
-
-        const { data, error } = await query;
-
-        if (error) {
-          console.error('Error fetching requests:', error);
-          return;
-        }
-
-        setRequests((data || []) as any);
-      } catch (error) {
-        console.error('Error fetching requests:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (profile) {
-      fetchRequests();
-    }
+    fetchRequests();
   }, [userRole, profile]);
+
+  const fetchRequests = async () => {
+    try {
+      setLoading(true);
+      
+      let query = supabase
+        .from('supply_requests')
+        .select(`
+          *,
+          branches(branch_name),
+          profiles(full_name)
+        `)
+        .order('created_at', { ascending: false });
+
+      // Filter requests based on user role
+      if (userRole === 'branch') {
+        query = query.eq('requested_by', profile?.user_id);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching requests:', error);
+        return;
+      }
+
+      setRequests((data || []) as any);
+    } catch (error) {
+      console.error('Error fetching requests:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -137,7 +140,7 @@ const Requests = () => {
           </p>
         </div>
         {userRole === 'branch' && (
-          <Button>
+          <Button onClick={() => setCreateDialogOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             New Request
           </Button>
@@ -162,7 +165,7 @@ const Requests = () => {
                   : 'No supply requests have been submitted.'}
               </p>
               {userRole === 'branch' && (
-                <Button className="mt-4">
+                <Button className="mt-4" onClick={() => setCreateDialogOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />
                   Create First Request
                 </Button>
@@ -219,19 +222,17 @@ const Requests = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setSelectedRequestId(request.id);
+                            setDetailsDialogOpen(true);
+                          }}
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
                           View
                         </Button>
-                        {userRole === 'admin' && request.status === 'pending' && (
-                          <>
-                            <Button variant="default" size="sm">
-                              Approve
-                            </Button>
-                            <Button variant="destructive" size="sm">
-                              Reject
-                            </Button>
-                          </>
-                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -241,6 +242,25 @@ const Requests = () => {
           )}
         </CardContent>
       </Card>
+
+      <CreateRequestDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onSuccess={() => {
+          fetchRequests();
+          setCreateDialogOpen(false);
+        }}
+      />
+
+      <RequestDetailsDialog
+        open={detailsDialogOpen}
+        onOpenChange={setDetailsDialogOpen}
+        requestId={selectedRequestId}
+        onSuccess={() => {
+          fetchRequests();
+          setDetailsDialogOpen(false);
+        }}
+      />
     </div>
   );
 };

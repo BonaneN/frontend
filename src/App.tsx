@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Inventory from "./pages/Inventory";
 import Requests from "./pages/Requests";
 import UserManagement from "./pages/UserManagement";
+import BudgetManagement from "./pages/BudgetManagement";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
@@ -60,10 +61,18 @@ const AppRoutes = () => {
           } 
         />
         <Route 
-          path="/users" 
+          path="/user-management" 
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <UserManagement />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/budget" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <BudgetManagement />
             </ProtectedRoute>
           } 
         />

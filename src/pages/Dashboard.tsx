@@ -174,35 +174,69 @@ const Dashboard = () => {
   const cards = getCards();
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold">
-          {getGreeting()}, {profile?.full_name || 'User'}!
-        </h1>
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary">{getRoleDisplay()}</Badge>
-          {userRole === 'branch' && profile?.branch_name && (
-            <Badge variant="outline">{profile.branch_name}</Badge>
-          )}
-          {userRole === 'supplier' && profile?.supplier_company && (
-            <Badge variant="outline">{profile.supplier_company}</Badge>
-          )}
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="space-y-8 p-6">
+        {/* Modern Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-background border border-border/50 p-8">
+          <div className="relative z-10">
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                  <span className="text-xl font-bold text-primary">
+                    {profile?.full_name?.charAt(0) || 'U'}
+                  </span>
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight">
+                    {getGreeting()}, {profile?.full_name || 'User'}!
+                  </h1>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge variant="secondary" className="text-xs">
+                      {getRoleDisplay()}
+                    </Badge>
+                    {userRole === 'branch' && profile?.branch_name && (
+                      <Badge variant="outline" className="text-xs">
+                        {profile.branch_name}
+                      </Badge>
+                    )}
+                    {userRole === 'supplier' && profile?.supplier_company && (
+                      <Badge variant="outline" className="text-xs">
+                        {profile.supplier_company}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="absolute top-0 right-0 h-full w-1/3 bg-gradient-to-l from-primary/5 to-transparent" />
         </div>
-      </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {cards.map((card, index) => (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
-              <card.icon className={`h-4 w-4 ${card.color}`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{card.value}</div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+        {/* Modern Stats Grid */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {cards.map((card, index) => (
+            <Card key={index} className="relative overflow-hidden border-0 bg-gradient-to-br from-card via-card to-card/50 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5" />
+              <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {card.title}
+                </CardTitle>
+                <div className={`p-2 rounded-lg bg-gradient-to-br from-background to-muted/50`}>
+                  <card.icon className={`h-5 w-5 ${card.color}`} />
+                </div>
+              </CardHeader>
+              <CardContent className="relative">
+                <div className="text-3xl font-bold tracking-tight mb-1">
+                  {card.value}
+                </div>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <TrendingUp className="h-3 w-3" />
+                  <span>Active</span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
       {/* Revenue Analysis */}
       <RevenueChart userRole={userRole || 'branch'} />
@@ -210,65 +244,87 @@ const Dashboard = () => {
       {/* Low Stock Alerts (Admin Only) */}
       <LowStockAlert userRole={userRole || 'branch'} />
 
-      {userRole === 'admin' && (
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>System Overview</CardTitle>
-              <CardDescription>Current system status and metrics</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Request Processing</span>
-                  <span>85%</span>
+        {userRole === 'admin' && (
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card className="border-0 bg-gradient-to-br from-card via-card to-card/50 shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/20">
+                    <TrendingUp className="h-4 w-4 text-blue-600" />
+                  </div>
+                  System Performance
+                </CardTitle>
+                <CardDescription>Real-time system metrics and KPIs</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">Request Processing</span>
+                    <span className="text-green-600 font-semibold">85%</span>
+                  </div>
+                  <div className="relative">
+                    <Progress value={85} className="h-2" />
+                    <div className="absolute top-0 left-0 h-full w-[85%] bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" />
+                  </div>
                 </div>
-                <Progress value={85} />
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Delivery Performance</span>
-                  <span>92%</span>
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">Delivery Performance</span>
+                    <span className="text-blue-600 font-semibold">92%</span>
+                  </div>
+                  <div className="relative">
+                    <Progress value={92} className="h-2" />
+                    <div className="absolute top-0 left-0 h-full w-[92%] bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full" />
+                  </div>
                 </div>
-                <Progress value={92} />
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Supplier Response Rate</span>
-                  <span>78%</span>
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">Supplier Response</span>
+                    <span className="text-orange-600 font-semibold">78%</span>
+                  </div>
+                  <div className="relative">
+                    <Progress value={78} className="h-2" />
+                    <div className="absolute top-0 left-0 h-full w-[78%] bg-gradient-to-r from-orange-500 to-amber-500 rounded-full" />
+                  </div>
                 </div>
-                <Progress value={78} />
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>Latest updates across the system</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>New supply request from Branch A</span>
-                  <span className="text-muted-foreground ml-auto">2 min ago</span>
+            <Card className="border-0 bg-gradient-to-br from-card via-card to-card/50 shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/20">
+                    <Building2 className="h-4 w-4 text-purple-600" />
+                  </div>
+                  Recent Activity
+                </CardTitle>
+                <CardDescription>Latest system updates and notifications</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { color: 'bg-green-500', text: 'New supply request submitted', time: '2 min ago', icon: '📋' },
+                    { color: 'bg-blue-500', text: 'Order #PO-001 confirmed', time: '15 min ago', icon: '✅' },
+                    { color: 'bg-orange-500', text: 'Shipment #SH-003 in transit', time: '1 hour ago', icon: '🚚' },
+                    { color: 'bg-purple-500', text: 'Budget report generated', time: '2 hours ago', icon: '📊' },
+                  ].map((activity, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-muted/50 to-transparent hover:from-muted hover:to-muted/50 transition-colors">
+                      <div className="flex items-center gap-3 flex-1">
+                        <span className="text-lg">{activity.icon}</span>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{activity.text}</p>
+                          <p className="text-xs text-muted-foreground">{activity.time}</p>
+                        </div>
+                      </div>
+                      <div className={`w-2 h-2 ${activity.color} rounded-full`} />
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span>Order #PO-001 confirmed by supplier</span>
-                  <span className="text-muted-foreground ml-auto">15 min ago</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  <span>Shipment #SH-003 in transit</span>
-                  <span className="text-muted-foreground ml-auto">1 hour ago</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
