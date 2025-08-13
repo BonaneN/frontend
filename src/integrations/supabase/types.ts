@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      annual_budgets: {
+        Row: {
+          allocated_budget: number
+          created_at: string
+          created_by: string
+          id: string
+          remaining_budget: number | null
+          status: string
+          total_budget: number
+          updated_at: string
+          used_budget: number
+          year: number
+        }
+        Insert: {
+          allocated_budget?: number
+          created_at?: string
+          created_by: string
+          id?: string
+          remaining_budget?: number | null
+          status?: string
+          total_budget?: number
+          updated_at?: string
+          used_budget?: number
+          year: number
+        }
+        Update: {
+          allocated_budget?: number
+          created_at?: string
+          created_by?: string
+          id?: string
+          remaining_budget?: number | null
+          status?: string
+          total_budget?: number
+          updated_at?: string
+          used_budget?: number
+          year?: number
+        }
+        Relationships: []
+      }
       branches: {
         Row: {
           address: string | null
@@ -52,6 +91,104 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      budget_categories: {
+        Row: {
+          allocated_amount: number
+          budget_id: string
+          category_name: string
+          created_at: string
+          id: string
+          remaining_amount: number | null
+          updated_at: string
+          used_amount: number
+        }
+        Insert: {
+          allocated_amount?: number
+          budget_id: string
+          category_name: string
+          created_at?: string
+          id?: string
+          remaining_amount?: number | null
+          updated_at?: string
+          used_amount?: number
+        }
+        Update: {
+          allocated_amount?: number
+          budget_id?: string
+          category_name?: string
+          created_at?: string
+          id?: string
+          remaining_amount?: number | null
+          updated_at?: string
+          used_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_categories_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "annual_budgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      budget_expenses: {
+        Row: {
+          amount: number
+          budget_id: string
+          category_id: string | null
+          created_at: string
+          created_by: string
+          description: string
+          expense_date: string
+          expense_type: string
+          id: string
+          reference_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          budget_id: string
+          category_id?: string | null
+          created_at?: string
+          created_by: string
+          description: string
+          expense_date?: string
+          expense_type?: string
+          id?: string
+          reference_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          budget_id?: string
+          category_id?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string
+          expense_date?: string
+          expense_type?: string
+          id?: string
+          reference_number?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_expenses_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "annual_budgets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budget_expenses_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "budget_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       categories: {
         Row: {
