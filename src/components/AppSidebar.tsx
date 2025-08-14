@@ -19,7 +19,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const items = [
   { title: "Dashboard", url: "/", icon: Home, roles: ['admin', 'branch', 'supplier'] },
   { title: "Inventory", url: "/inventory", icon: Package, roles: ['admin', 'branch'] },
-  { title: "Requests", url: "/requests", icon: FileText, roles: ['admin', 'branch'] },
+  { title: "Requests", url: "/requests", icon: FileText, roles: ['admin', 'branch', 'supplier'] },
+  { title: "Shipments", url: "/shipments", icon: Truck, roles: ['branch', 'supplier'] },
+  { title: "Reports", url: "/reports", icon: BarChart3, roles: ['supplier'] },
   { title: "Budget Management", url: "/budget", icon: DollarSign, roles: ['admin'] },
   { title: "User Management", url: "/user-management", icon: Users, roles: ['admin'] },
 ];
